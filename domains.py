@@ -52,5 +52,8 @@ class DomainFinder(collections.Mapping):
     def __len__(self):
         return len(self._tlds)
 
+    def __repr__(self):
+        """Not for the faint of heart."""
+        return repr(dict(self))
 
 domains = DomainFinder()
