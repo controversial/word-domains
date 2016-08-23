@@ -33,24 +33,24 @@ def get_words():
 
 
 class DomainFinder(collections.Mapping):
-    tlds = get_tlds()
-    words = get_words()
+    _tlds = get_tlds()
+    _words = get_words()
 
     def __getitem__(self, ext):
-        if ext not in self.tlds:
+        if ext not in self._tlds:
             raise KeyError(ext)
         else:
             simple_ext = ext.replace(".", "")
 
             return [w[:-len(simple_ext)] + "." + ext for w in
-                    self.words
+                    self._words
                     if w.endswith(simple_ext) and w != simple_ext]
 
     def __iter__(self):
-        return iter(self.tlds)
+        return iter(self._tlds)
 
     def __len__(self):
-        return len(self.tlds)
+        return len(self._tlds)
 
 
 domains = DomainFinder()
