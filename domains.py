@@ -1,3 +1,4 @@
+import collections
 import os
 
 import requests
@@ -31,30 +32,25 @@ def get_words():
     return r.text.split('"')[1].split("|")
 
 
-def get_matches():
-    """Match TLDs with words to generate domains that look like words."""
+class DomainFinder(collections.Mapping):
     tlds = get_tlds()
-    simpletlds = [tld.replace(".", "") for tld in tlds]
     words = get_words()
 
-    print("Generating matches...")
+    def __getitem__(self, ext):
+        if ext not in self.tlds:
+            raise KeyError(ext)
+        else:
+            simple_ext = ext.replace(".", "")
 
-    results = {tld: [] for tld in tlds}
+            return [w[:-len(simple_ext)] + "." + ext for w in
+                    self.words
+                    if w.endswith(simple_ext) and w != simple_ext]
 
-    for i, ext in enumerate(simpletlds):
-        matches = [w for w in words if w.endswith(ext) and w != ext]
-        for match in matches:
-            results[tlds[i]].append(match[:-len(ext)] + "." + tlds[i])
-        if results[tlds[i]]:
-            print("." + tlds[i], end=" ")
+    def __iter__(self):
+        return iter(self.tlds)
 
-    # Filter out extensions with no results
-    return {
-        ext: results[ext]
-        for ext in results
-        if [r for r in results[ext] if r.replace(".", "") != ext]
-    }
+    def __len__(self):
+        return len(self.tlds)
 
 
-if __name__ == "__main__":
-    matches = get_matches()
+domains = DomainFinder()
