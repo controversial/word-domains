@@ -24,12 +24,10 @@ def get_tlds():
 
 
 def get_words():
-    """Rip a of common english words from Randall Munroe's website."""
+    """Get a list of english words from /usr/share/dict/words (UNIX only)."""
 
-    print("Downloading word list...")
-
-    r = requests.get("http://xkcd.com/simplewriter/words.js")
-    return r.text.split('"')[1].split("|")
+    with open("/usr/share/dict/words") as f:
+        return f.read().split("\n")
 
 
 class DomainFinder(collections.Mapping):
