@@ -54,4 +54,7 @@ class DomainFinder(collections.Mapping):
         """Not for the faint of heart."""
         return repr(dict(self))
 
+    def keys(self):
+        return self._tlds
+
 domains = DomainFinder()
